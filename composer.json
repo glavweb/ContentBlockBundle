@@ -1,6 +1,6 @@
 {
     "name": "glavweb/content-block-bundle",
-    "description": "Symfony ContentBlockBundle",
+    "description": "Symfony GlavwebContentBlockBundle",
     "authors": [
         {
             "name": "nilov",
@@ -9,7 +9,7 @@
         },
         {
             "name": "GLAVWEB Community",
-            "homepage": "https://github.com/glavweb/ContentBlockBundle/contributors"
+            "homepage": "https://github.com/glavweb/GlavwebContentBlockBundle/contributors"
         }
     ],
     "require": {
