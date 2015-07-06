@@ -1,0 +1,8 @@
+services:
+    glavweb_content_block.twig.content_block_extension:
+        class:     Glavweb\ContentBlockBundle\Twig\ContentBlockExtension
+        arguments: ["@request_stack", "@doctrine", "@security.context"]
+        pablic:    false
+        tags:
+            - { name: twig.extension }
+

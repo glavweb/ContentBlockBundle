@@ -1,0 +1,54 @@
+<script>
+    {% if is_granted('ROLE_ADMIN') and app.request.get('contenteditable') %}
+
+    jQuery(function () {
+        $(document).ready(function () {
+            var changedContents = {};
+            var originContents  = {};
+
+            function updateOriginContents() {
+                $.each($('.js-content-block'), function(){
+                    var blockName = $(this).data('block-name');
+                    var content   = $(this).html();
+
+                    originContents[blockName] = content;
+                });
+            }
+            updateOriginContents();
+
+            $('.js-content-block').blur(function() {
+                var blockName = $(this).data('block-name');
+                var content   = $(this).html();
+
+                if (content != originContents[blockName]) {
+                    changedContents[blockName] = content;
+                } else if (changedContents[blockName] !== undefined) {
+                    delete changedContents[blockName];
+                }
+            });
+
+            $('.js-admin-save-content').on('click', function () {
+                if (!$.isEmptyObject(changedContents)) {
+                    $.post('content-block/save', {'blocks': changedContents}, function (response) {
+                        if (response.result) {
+                            changedContents = {};
+                            updateOriginContents();
+
+                            bootbox.alert('Изменения сохранены.');
+                        }
+                    });
+                } else {
+                    bootbox.alert('Изменений нет.');
+                }
+            });
+
+            window.onbeforeunload = function(){
+                if (!$.isEmptyObject(changedContents)) {
+                    return "Имеется не сохраненная инфорамация."
+                }
+            };
+        });
+    });
+    {% endif %}
+
+</script>
