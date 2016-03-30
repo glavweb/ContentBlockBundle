@@ -87,29 +87,39 @@ class ContentBlockController extends Controller
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
         $contentBlock = $repository->findByName($name);
 
-        if(!empty($contentBlock)) {
-            $status = 200;
+        if(empty($contentBlock)) {
+            $contentBlock = new ContentBlock();
+            $contentBlock->setName($name);
+            $contentBlock->setBody($name);
+            $em->persist($contentBlock);
+            $em->flush();
+            $status = 201;
         } else {
             $status = 400;
         }
+
         return new JsonResponse(array(
-            'status' =>  $status == 200 ? true : false
+            'status' =>  $status == 200 ? true : false,
+            'contentBlock' => $contentBlock
         ), $status);
     }
 
     /**
-     * @Route("/api/content-block/{id}", name="content_block_edit", requirements={"_method": "PUT"})
+     * @Route("/api/content-block/{name}/{content}", name="content_block_edit", requirements={"_method": "PUT"})
      *
      * @param string $name
+     * @param string $content
      * @return JsonResponse
      */
-    public function editAction($name)
+    public function editAction($name, $content)
     {
         $em           = $this->getDoctrine()->getManager();
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
         $contentBlock = $repository->findByName($name);
 
         if(!empty($contentBlock)) {
+            $contentBlock->setBody($content);
+            $em->flush();
             $status = 200;
         } else {
             $status = 400;
