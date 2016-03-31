@@ -70,9 +70,7 @@ class ContentBlockController extends Controller
             $status = 400;
         }
 
-        return new JsonResponse(array(
-            'status' =>  $status == 201 ? true : false
-        ), $status);
+        return new JsonResponse(array(), $status);
     }
 
     /**
@@ -93,13 +91,12 @@ class ContentBlockController extends Controller
             $contentBlock->setBody($name);
             $em->persist($contentBlock);
             $em->flush();
-            $status = 201;
+            $status = 200;
         } else {
             $status = 400;
         }
 
         return new JsonResponse(array(
-            'status' =>  $status == 200 ? true : false,
             'contentBlock' => $contentBlock
         ), $status);
     }
@@ -124,9 +121,7 @@ class ContentBlockController extends Controller
         } else {
             $status = 400;
         }
-        return new JsonResponse(array(
-            'status' =>  $status == 200 ? true : false
-        ), $status);
+        return new JsonResponse(array(), $status);
     }
 
     /**
@@ -148,8 +143,6 @@ class ContentBlockController extends Controller
         } else {
             $status = 400;
         }
-        return new JsonResponse(array(
-            'status' =>  $status == 200 ? true : false
-        ), $status);
+        return new JsonResponse(array(), $status);
     }
 }
