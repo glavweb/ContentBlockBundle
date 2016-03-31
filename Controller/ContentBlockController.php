@@ -110,10 +110,10 @@ class ContentBlockController extends Controller
         $em           = $this->getDoctrine()->getManager();
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
         $contentBlock = $repository->findOneByName($name);
-        $content      = $request->request->get('content', '');
+        $content      = json_decode($request->getContent());
 
         if(!empty($contentBlock)) {
-            $contentBlock->setBody($content);
+            $contentBlock->setBody($content->body);
             $em->flush();
             $status = 200;
         } else {
