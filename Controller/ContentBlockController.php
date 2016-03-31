@@ -57,7 +57,7 @@ class ContentBlockController extends Controller
     {
         $em           = $this->getDoctrine()->getManager();
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
-        $contentBlock = $repository->findByName($name);
+        $contentBlock = $repository->findOneByName($name);
 
         if(empty($contentBlock)) {
             $contentBlock = new ContentBlock();
@@ -83,7 +83,7 @@ class ContentBlockController extends Controller
     {
         $em           = $this->getDoctrine()->getManager();
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
-        $contentBlock = $repository->findByName($name);
+        $contentBlock = $repository->findOneByName($name);
 
         if(empty($contentBlock)) {
             $contentBlock = new ContentBlock();
@@ -91,28 +91,26 @@ class ContentBlockController extends Controller
             $contentBlock->setBody($name);
             $em->persist($contentBlock);
             $em->flush();
-            $status = 200;
-        } else {
-            $status = 400;
         }
 
         return new JsonResponse(array(
-            'contentBlock' => $contentBlock
-        ), $status);
+            'contentBlock' => $contentBlock->getBody()
+        ));
     }
 
     /**
-     * @Route("/api/content-block/{name}/{content}", name="content_block_edit", requirements={"_method": "PUT"})
+     * @Route("/api/content-block/{name}", name="content_block_edit", requirements={"_method": "PUT"})
      *
      * @param string $name
-     * @param string $content
+     * @param Request $request
      * @return JsonResponse
      */
-    public function editAction($name, $content)
+    public function editAction($name, Request $request)
     {
         $em           = $this->getDoctrine()->getManager();
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
-        $contentBlock = $repository->findByName($name);
+        $contentBlock = $repository->findOneByName($name);
+        $content      = $request->request->get('content', '');
 
         if(!empty($contentBlock)) {
             $contentBlock->setBody($content);
@@ -134,7 +132,7 @@ class ContentBlockController extends Controller
     {
         $em           = $this->getDoctrine()->getManager();
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
-        $contentBlock = $repository->findByName($name);
+        $contentBlock = $repository->findOneByName($name);
 
         if(!empty($contentBlock)) {
             $em->remove($contentBlock);
