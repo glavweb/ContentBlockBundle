@@ -1,6 +1,7 @@
 <?php
 namespace Glavweb\ContentBlockBundle\Controller;
 
+use Glavweb\ActionBundle\Action\Exception;
 use Glavweb\ContentBlockBundle\Entity\ContentBlock;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -21,6 +22,8 @@ class ContentBlockController extends Controller
      */
     public function actionSave(Request $request)
     {
+        $this->isAuth();
+
         $em         = $this->getDoctrine()->getManager();
         $repository = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
         $blocks     = $request->request->get('blocks', array());
@@ -55,6 +58,13 @@ class ContentBlockController extends Controller
      */
     public function createAction($name)
     {
+        $user = $this->isAuth();
+        if(!$user) {
+            return new JsonResponse(array(
+                'message' => 'Нужна авторизация на сервере.'
+            ), 400);
+        }
+
         $em           = $this->getDoctrine()->getManager();
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
         $contentBlock = $repository->findOneByName($name);
@@ -81,6 +91,12 @@ class ContentBlockController extends Controller
      */
     public function showAction($name)
     {
+        $editable = false ;
+        $user = $this->isAuth();
+        if($user) {
+            $editable = true;
+        }
+
         $em           = $this->getDoctrine()->getManager();
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
         $contentBlock = $repository->findOneByName($name);
@@ -94,6 +110,7 @@ class ContentBlockController extends Controller
         }
 
         return new JsonResponse(array(
+            'editable' => $editable,
             'contentBlock' => $contentBlock->getBody()
         ));
     }
@@ -107,6 +124,13 @@ class ContentBlockController extends Controller
      */
     public function editAction($name, Request $request)
     {
+        $user = $this->isAuth();
+        if(!$user) {
+            return new JsonResponse(array(
+                'message' => 'Нужна авторизация на сервере.'
+            ), 400);
+        }
+
         $em           = $this->getDoctrine()->getManager();
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
         $contentBlock = $repository->findOneByName($name);
@@ -130,6 +154,13 @@ class ContentBlockController extends Controller
      */
     public function removeAction($name)
     {
+        $user = $this->isAuth();
+        if(!$user) {
+            return new JsonResponse(array(
+                'message' => 'Нужна авторизация на сервере.'
+            ), 400);
+        }
+
         $em           = $this->getDoctrine()->getManager();
         $repository   = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
         $contentBlock = $repository->findOneByName($name);
@@ -142,5 +173,18 @@ class ContentBlockController extends Controller
             $status = 400;
         }
         return new JsonResponse(array(), $status);
+    }
+
+    /**
+     * @return mixed|null
+     */
+    private function isAuth()
+    {
+        $user = $this->getUser();
+        if (!$user || !$user->hasRole('ROLE_ADMIN')) {
+            return null;
+        }
+
+        return $user;
     }
 }
