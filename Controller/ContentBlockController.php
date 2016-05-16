@@ -181,7 +181,7 @@ class ContentBlockController extends Controller
     private function isAuth()
     {
         $user = $this->getUser();
-        if (!$user || !$user->hasRole('ROLE_ADMIN')) {
+        if (!$user || !$user->hasRole('ROLE_SUPER_ADMIN')) {
             return null;
         }
 
