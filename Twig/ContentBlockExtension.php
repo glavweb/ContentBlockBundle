@@ -5,7 +5,7 @@ namespace Glavweb\ContentBlockBundle\Twig;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Glavweb\ContentBlockBundle\Entity\ContentBlock;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 /**
  * Class ContentBlockExtension
@@ -24,20 +24,20 @@ class ContentBlockExtension extends \Twig_Extension
     private $doctrine;
 
     /**
-     * @var SecurityContext
+     * @var AuthorizationChecker
      */
-    private $securityContext;
+    private $authorizationChecker;
 
     /**
-     * @param RequestStack $requestStack
-     * @param Registry $doctrine
-     * @param SecurityContext $securityContext
+     * @param RequestStack         $requestStack
+     * @param Registry             $doctrine
+     * @param AuthorizationChecker $authorizationChecker
      */
-    public function __construct(RequestStack $requestStack, Registry $doctrine, SecurityContext $securityContext)
+    public function __construct(RequestStack $requestStack, Registry $doctrine, AuthorizationChecker $authorizationChecker)
     {
-        $this->request         = $requestStack->getCurrentRequest();
-        $this->doctrine        = $doctrine;
-        $this->securityContext = $securityContext;
+        $this->request              = $requestStack->getCurrentRequest();
+        $this->doctrine             = $doctrine;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -97,7 +97,7 @@ class ContentBlockExtension extends \Twig_Extension
 
         $isEditable =
             $this->request && $this->request->get('contenteditable') &&
-            $this->securityContext->isGranted('ROLE_ADMIN')
+            $this->authorizationChecker->isGranted('ROLE_ADMIN')
         ;
 
         if ($isEditable) {
