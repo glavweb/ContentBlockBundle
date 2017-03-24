@@ -1,4 +1,5 @@
 <?php
+
 namespace Glavweb\ContentBlockBundle\Controller;
 
 use Glavweb\ActionBundle\Action\Exception;
@@ -7,9 +8,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\User;
 
 /**
  * Class ContentBlockController
+ * 
  * @package GlavwebContentBlockBundle\Controller
  */
 class ContentBlockController extends Controller
@@ -22,7 +25,12 @@ class ContentBlockController extends Controller
      */
     public function actionSave(Request $request)
     {
-        $this->isAuth();
+        $user = $this->getAdminUser();
+        if (!$user) {
+            return new JsonResponse(array(
+                'message' => 'Нужна авторизация на сервере.'
+            ), 400);
+        }
 
         $em         = $this->getDoctrine()->getManager();
         $repository = $em->getRepository('GlavwebContentBlockBundle:ContentBlock');
@@ -58,8 +66,8 @@ class ContentBlockController extends Controller
      */
     public function createAction($name)
     {
-        $user = $this->isAuth();
-        if(!$user) {
+        $user = $this->getAdminUser();
+        if (!$user) {
             return new JsonResponse(array(
                 'message' => 'Нужна авторизация на сервере.'
             ), 400);
@@ -92,8 +100,8 @@ class ContentBlockController extends Controller
     public function showAction($name)
     {
         $editable = false ;
-        $user = $this->isAuth();
-        if($user) {
+        $user = $this->getAdminUser();
+        if ($user) {
             $editable = true;
         }
 
@@ -124,8 +132,8 @@ class ContentBlockController extends Controller
      */
     public function editAction($name, Request $request)
     {
-        $user = $this->isAuth();
-        if(!$user) {
+        $user = $this->getAdminUser();
+        if (!$user) {
             return new JsonResponse(array(
                 'message' => 'Нужна авторизация на сервере.'
             ), 400);
@@ -154,8 +162,8 @@ class ContentBlockController extends Controller
      */
     public function removeAction($name)
     {
-        $user = $this->isAuth();
-        if(!$user) {
+        $user = $this->getAdminUser();
+        if (!$user) {
             return new JsonResponse(array(
                 'message' => 'Нужна авторизация на сервере.'
             ), 400);
@@ -176,15 +184,15 @@ class ContentBlockController extends Controller
     }
 
     /**
-     * @return mixed|null
+     * @return User|null
      */
-    private function isAuth()
+    private function getAdminUser()
     {
         $user = $this->getUser();
-        if (!$user || !$user->hasRole('ROLE_SUPER_ADMIN')) {
-            return null;
+        if ($user && $user->hasRole('ROLE_SUPER_ADMIN')) {
+            return $user;
         }
 
-        return $user;
+        return null;
     }
 }
