@@ -12,13 +12,13 @@ use Symfony\Component\Security\Core\User\User;
 
 /**
  * Class ContentBlockController
- * 
+ *
  * @package GlavwebContentBlockBundle\Controller
  */
 class ContentBlockController extends Controller
 {
     /**
-     * @Route("/content-block/save", name="content_block_save", requirements={"_method": "POST"})
+     * @Route("/content-block/save", name="content_block_save", methods={"POST"})
      *
      * @param Request $request
      * @return JsonResponse
@@ -59,7 +59,7 @@ class ContentBlockController extends Controller
     }
 
     /**
-     * @Route("/api/content-block/{name}", name="content_block_create", requirements={"_method": "POST"})
+     * @Route("/api/content-block/{name}", name="content_block_create", methods={"POST"})
      *
      * @param string $name
      * @return JsonResponse
@@ -92,7 +92,7 @@ class ContentBlockController extends Controller
     }
 
     /**
-     * @Route("/api/content-block/{name}", name="content_block_show", requirements={"_method": "GET"})
+     * @Route("/api/content-block/{name}", name="content_block_show", methods={"GET"})
      *
      * @param string $name
      * @return JsonResponse
@@ -124,7 +124,7 @@ class ContentBlockController extends Controller
     }
 
     /**
-     * @Route("/api/content-block/{name}", name="content_block_edit", requirements={"_method": "PUT"})
+     * @Route("/api/content-block/{name}", name="content_block_edit", methods={"PUT"})
      *
      * @param string $name
      * @param Request $request
@@ -155,7 +155,7 @@ class ContentBlockController extends Controller
     }
 
     /**
-     * @Route("/api/content-block/{name}", name="content_block_remove", requirements={"_method": "DELETE"})
+     * @Route("/api/content-block/{name}", name="content_block_remove", methods={"DELETE"})
      *
      * @param string $name
      * @return JsonResponse
